@@ -1,17 +1,17 @@
 package com.example.springboot_project1.learning_springboot.controllers;
 
-import java.time.LocalDate;
+import java.util.List;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.example.springboot_project1.learning_springboot.dto.EmployeeDto;
-
-import jakarta.websocket.server.PathParam;
-
+import com.example.springboot_project1.learning_springboot.services.EmployeeService;
 import org.springframework.web.bind.annotation.RequestParam;
-
 
 
 //operations
@@ -20,17 +20,34 @@ import org.springframework.web.bind.annotation.RequestParam;
 //delete / employees
 
 @RestController
+@RequestMapping(path = "/employees")
 
 public class EmployeeController {
 
-    @GetMapping(path = "/employees/{id}")
-    public EmployeeDto getEmployees(@PathVariable("id") Long employeeId) {
+    private final EmployeeService employeeService;
 
-        return new EmployeeDto(employeeId, "Vikas Gupta", LocalDate.of(2022, 05,01),true);
+    public EmployeeController(EmployeeService employeeService){
+        this.employeeService = employeeService;
     }
 
-    @GetMapping(path="/employees")
-    public String getData(@PathParam("sortBy") String sortBy, @PathParam("Limit") Integer limit) {
-        return "Hello "+sortBy + " "+ limit;
+    @GetMapping(path = "/{id}")
+    public EmployeeDto getEmployeesById(@PathVariable("id") Long employeeId) {
+        return employeeService.getEmployeeById(employeeId);
+    }
+
+    @PostMapping
+    public EmployeeDto createNewEmployee(@RequestBody EmployeeDto employeeDto) {
+        return employeeService.createNewEmployee(employeeDto);
     }     
+
+    @GetMapping
+    public List<EmployeeDto> getAllEmployees() {
+        return employeeService.getAllEmployees();
+    }
+
+    @DeleteMapping(path = "/{id}")
+    public boolean deleteEmployeeById(@PathVariable Long id){
+        return employeeService.deleteEmployeeById(id);
+    }
+    
 }
